@@ -1,5 +1,9 @@
 # Blockchain GPT
 
+
+![logo](https://user-images.githubusercontent.com/934740/216062510-f25a48d3-4c25-4066-a091-c4df5b6bb550.png)
+
+
 Blockchain GPT is an AI-powered chatbot that provides answers to questions about blockchain. The chatbot is trained on the latest blockchain data, including human writings, project source code, transactions, blocks, and smart contracts.
 
 ## Features
