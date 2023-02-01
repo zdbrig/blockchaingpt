@@ -4,9 +4,14 @@ import axios from 'axios';
 const ChatPage = () => {
   const [userMessage, setUserMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setIsLoading(true);
+    setError(null);
 
     setChatHistory([...chatHistory, {
       type: 'user',
@@ -14,8 +19,8 @@ const ChatPage = () => {
     }]);
 
     try {
-      const response = await axios.post('https://localhost:3001/chat', {
-        message: userMessage,
+      const response = await axios.post('http://localhost:3001/query', {
+        query: userMessage,
       });
       const botMessage = response.data.answer;
 
@@ -24,7 +29,9 @@ const ChatPage = () => {
         message: botMessage,
       }]);
     } catch (error) {
-      console.error(error);
+      setError(error);
+    } finally {
+      setIsLoading(false);
     }
 
     setUserMessage('');
@@ -40,13 +47,18 @@ const ChatPage = () => {
           </li>
         ))}
       </ul>
+      {error && (
+        <p className="error">An error occurred. Please try again.</p>
+      )}
       <form onSubmit={handleSubmit}>
         <input
           type="text"
           value={userMessage}
           onChange={(e) => setUserMessage(e.target.value)}
         />
-        <button type="submit">Submit</button>
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? 'Loading...' : 'Submit'}
+        </button>
       </form>
     </div>
   );
