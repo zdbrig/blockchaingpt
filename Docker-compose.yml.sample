@@ -1,0 +1,59 @@
+version: '3'
+services:
+  bgpt-server:
+    build: ./bgpt-server
+    ports:
+      - 3001:3001
+    environment:
+      - HQ_URI=amqp://sqoin:123456@rabbitmqservice:5672
+      - BASE_URL=http://localhost:3000
+      - MONGODB_URI=mongodb://mongodb:27017
+      - PROCESSOR_URL=http://bgpt-processor:3002/
+    depends_on:
+      - rabbitmqservice
+      - mongodb
+    volumes:
+      - ./bgpt-server:/app
+      - /app/node_modules
+  bgpt-ui:
+    build: ./bgpt-ui
+    ports:
+      - 3000:3000
+    environment:
+      - GITHUB_CLIENT_ID=your_id
+      - GITHUB_CLIENT_SECRET=your_secret
+      - BASE_URL=http://localhost:3000
+    depends_on:
+      - bgpt-server
+    volumes:
+      - ./bgpt-ui:/app
+      - /app/node_modules
+  mongodb:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongodata:/data/db
+  rabbitmqservice:
+    image: rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "sqoin-cookie"
+      RABBITMQ_DEFAULT_USER: "sqoin"
+      RABBITMQ_DEFAULT_PASS: "123456"
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq
+  bgpt-processor:
+    build: ./bgpt-processor
+    ports:
+      - 3002:3002
+    environment:
+      - OPENAI_SECRET_KEY=yoursecret
+      - HQ_URI=amqp://sqoin:123456@rabbitmqservice:5672
+      - MONGODB_URI=mongodb://mongodb:27017
+    volumes:
+      - ./bgpt-processor:/app
+      - /app/node_modules
+  

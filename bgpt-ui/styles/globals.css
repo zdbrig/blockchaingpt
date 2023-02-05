@@ -65,3 +65,25 @@ button[type="submit"] {
   color: red;
   margin-top: 20px;
 }
+
+
+.task {
+  background-color: #f2f2f2;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 8px #ccc;
+}
+
+.task h3 {
+  margin-top: 0;
+}
+
+.task div {
+  margin-bottom: 10px;
+}
+
+.task strong {
+  font-weight: bold;
+  display: inline-block;
+  width: 80px;
+}

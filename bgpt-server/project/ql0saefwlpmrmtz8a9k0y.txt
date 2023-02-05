@@ -1,0 +1,7 @@
+
+
+There are a variety of resources available to help you learn more about software architecture: 
+1. Online courses, such as Coursera and Udemy. 
+2. Books on the subject like Software Architecture in Practice (3rd Edition) by Len Bass et al., The Art of Scalability by Martin L Abbott & Michael T Fisher Jr., or Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems by Martin Kleppmann .  
+3. Professional organizations like IEEE Computer Society’s Technical Council on Software Engineering which offers certification programs for professional development; ACM SIGSOFT's Special Interest Group devoted exclusively to promoting research related topics in software engineering; INCOSE International Organization dedicated to advancing systems engineering principles worldwide etc..   
+4. Conferences/ seminars hosted globally that focus specifically on architectural design strategies and implementations eg ICSA 2019 - 12th International Conference On Structural Analysis Of Advanced Materials And Intelligent Computing System Technologies ; CASCON 2017 – Canadian Annual Systems Conference , Automated Spacecraft Operations Workshop ASOW 2018–Annual AIAA SpaceOps Proceedings etc..

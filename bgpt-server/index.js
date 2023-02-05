@@ -1,36 +1,78 @@
-const { Configuration, OpenAIApi } = require("openai");
 const express = require('express');
 const cors = require('cors');
+const mongoose = require('mongoose');
+const amqp = require('amqplib/callback_api');
+const Task = require('./Task'); // importing the Task model
 
-const apiKey = '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';
-const configuration = new Configuration({
-apiKey: apiKey,
-});
-const openai = new OpenAIApi(configuration);
+
+
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
+let connectedChannel = null;
+amqp.connect(process.env.HQ_URI, (error, connection) => {
+    if (error) {
+        throw error;
+    }
+
+    // Create a channel
+    connection.createChannel((error, channel) => {
+        if (error) {
+            throw error;
+        }
+
+        connectedChannel = channel;
+    });
+});
+
 app.post('/query', async (req, res) => {
-try {
-const response = await openai.createCompletion({
-model: "text-davinci-003",
-prompt: JSON.stringify(req.body.query),
-temperature: 0,
-max_tokens: 4048,
-frequency_penalty: 0,
-presence_penalty: 0,
+    try {
+
+        // Declare a queue
+        const queue = 'openai-queue';
+        connectedChannel.assertQueue(queue, {
+            durable: true
+        });
+
+        let obj = {
+            id: '' + Math.floor(Math.random() * 100),
+            status: 'pending',
+            parent: '',
+            query: req.body.query,
+            result: ''
+          };
+        
+        connectedChannel.sendToQueue(queue,Buffer.from( JSON.stringify(obj)), {
+            persistent: true
+        });
+
+
+        res.json({ answer: "task added to the queue" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send(error);
+    }
 });
 
 
-res.json({ answer: response.data.choices[0].text });
-} catch (error) {
-console.error(error);
-res.status(500).send(error);
-}
+// Get all tasks
+app.get('/tasks', async (req, res) => {
+  try {
+    const tasks = await Task.find();
+    res.json(tasks);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
+
+
+
 
 app.listen(3001, () => {
-console.log('Listening on port 3001');
+    console.log('Listening on port 3001');
 });
