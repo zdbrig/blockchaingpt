@@ -87,3 +87,22 @@ button[type="submit"] {
   display: inline-block;
   width: 80px;
 }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #ddd;
+}
+
+.red {
+  color: red;
+}

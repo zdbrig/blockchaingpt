@@ -3,6 +3,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const amqp = require('amqplib/callback_api');
 const Task = require('./Task'); // importing the Task model
+const Analysis = require('./Analysis');
 
 
 
@@ -70,7 +71,11 @@ app.get('/tasks', async (req, res) => {
   }
 });
 
-
+app.get('/analysis', (req, res) => {
+    Analysis.find({})
+        .then(analyses => res.json(analyses))
+        .catch(err => res.status(404).json({ success: false }));
+});
 
 
 app.listen(3001, () => {

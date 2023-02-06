@@ -1,6 +1,8 @@
 const callopenai = require('./call-openai');
 const mongoose = require('mongoose');
 const log = require("./log");
+const createAnalysis = require('./createAnalysis');
+const addQuestionToAnalysis = require('./addQuestionToAnalysis');
 
 async function loadQuestions() {
     try {
@@ -17,16 +19,17 @@ async function loadQuestions() {
     }
   }
 
-let suggest_question = async (question , previousResponse) => {
+let suggest_question = async (answer , previousQuestion) => {
+    await createAnalysis(previousQuestion);
     let questions = await loadQuestions();
     let query =  `These questions between backets  [ ${questions} ] has been already asked. List me all the possible tasks that can be done by artificial intelligence to perform this goal.`;
     log(`suggestion query is : ${query}`);
     let response = await callopenai(query);
     log(`response is : ${response}`);
     const items = response.match(/\d+\.\s[^\d]+/g);
-          
-
-    
+    items.map( async item => {
+      await addQuestionToAnalysis(previousQuestion , item);
+    });
     return items;
 }
 

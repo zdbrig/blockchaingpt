@@ -4,6 +4,7 @@ import RichText from './response';
 import Tasks from './tasks';
 import LoginWithGitHubButton from './loginWithGithubButton';
 import Router from 'next/router';
+import AnalysisList from './analysis';
 
 
 const ChatPage = () => {
@@ -90,6 +91,7 @@ const ChatPage = () => {
             </form>
 
             <Tasks></Tasks>
+            <AnalysisList></AnalysisList>
           </div>
         
           <div>

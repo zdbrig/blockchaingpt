@@ -63,14 +63,14 @@ let processTask = async (task, channel) => {
       (suggestions) => {
         if (suggestions) {
           suggestions.map((suggestion) => {
-            const queue = 'openai-queue';
+            const queue = 'openai-analyze';
             channel.assertQueue(queue, {
               durable: true
             });
             let obj = {
               id: '' + Math.floor(Math.random() * 100),
               status: 'pending',
-              parent: task,
+              context: task.query,
               query: suggestion,
               result: ''
             };

@@ -34,8 +34,8 @@ const Task = ({ status, time, query, result }) => {
 
         
         <strong>Answer: </strong>
-        {localResult}
-      { /*  <div  dangerouslySetInnerHTML={{ __html: marked(localResult) }} /> --> */}
+        
+      {  <div  dangerouslySetInnerHTML={{ __html: marked(localResult ? localResult : "none") }} />  }
       </div>
     </div>
   );
