@@ -22,13 +22,14 @@ async function loadQuestions() {
 let suggest_question = async (answer , previousQuestion) => {
     await createAnalysis(previousQuestion);
     let questions = await loadQuestions();
-    let query =  `These questions between backets  [ ${questions} ] has been already asked. List me all the possible tasks that can be done by artificial intelligence to perform this goal.`;
+    let query =  `These questions between backets  [ ${questions} ] has been already asked. List me all the possible tasks that can be done by you to perform this goal.`;
     log(`suggestion query is : ${query}`);
     let response = await callopenai(query);
     log(`response is : ${response}`);
     const items = response.match(/\d+\.\s[^\d]+/g);
     items.map( async item => {
-      await addQuestionToAnalysis(previousQuestion , item);
+      let pureItem = item.replace(/^\d+\.\s/, "");
+      await addQuestionToAnalysis(previousQuestion , pureItem);
     });
     return items;
 }

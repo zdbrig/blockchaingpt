@@ -63,6 +63,7 @@ let processTask = async (task, channel) => {
       (suggestions) => {
         if (suggestions) {
           suggestions.map((suggestion) => {
+            let pureItem = suggestion.replace(/^\d+\.\s/, "");
             const queue = 'openai-analyze';
             channel.assertQueue(queue, {
               durable: true
@@ -71,7 +72,7 @@ let processTask = async (task, channel) => {
               id: '' + Math.floor(Math.random() * 100),
               status: 'pending',
               context: task.query,
-              query: suggestion,
+              query: pureItem,
               result: ''
             };
 
