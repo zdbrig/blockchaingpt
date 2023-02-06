@@ -47,7 +47,7 @@ const ChatPage = () => {
 
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
+    const storedToken = "token";
     const code = Router.query.code;
 
     if (storedToken) {
@@ -62,8 +62,8 @@ const ChatPage = () => {
   return (
     <div className="chat-container">
       <h1>Blockchain GPT Chat</h1>
-      {
-        token ? (
+      
+        
           <div>
 
             
@@ -91,12 +91,12 @@ const ChatPage = () => {
 
             <Tasks></Tasks>
           </div>
-        ) : (
+        
           <div>
             <LoginWithGitHubButton></LoginWithGitHubButton>
           </div>
-        )
-      }
+        
+      
 
 
 

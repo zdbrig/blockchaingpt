@@ -50,10 +50,18 @@ services:
     ports:
       - 3002:3002
     environment:
-      - OPENAI_SECRET_KEY=yoursecret
+      - OPENAI_SECRET_KEY=secret
       - HQ_URI=amqp://sqoin:123456@rabbitmqservice:5672
       - MONGODB_URI=mongodb://mongodb:27017
     volumes:
       - ./bgpt-processor:/app
       - /app/node_modules
-  
+  worker:
+    build: ./bgpt-worker
+    environment:
+      - PROCESSOR_URL=http://bgpt-processor:3002/query
+      - RABBITMQ_HOST=rabbitmqservice
+    volumes:
+      - ./bgpt-worker:/app
+    depends_on:
+      - rabbitmqservice
