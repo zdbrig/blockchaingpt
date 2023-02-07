@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import hljs from 'highlight.js'
 import {marked} from 'marked';
+import Tree from './tree';
 const AnalysisList = () => {
     const [analyses, setAnalyses] = useState([]);
 
@@ -25,31 +26,10 @@ const AnalysisList = () => {
     }, []);
 
     return (
-        <table>
-            <thead>
-                <tr>
-                    <th>Context</th>
-                    <th>Subject</th>
-                    <th>Questions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {analyses.map(analysis => (
-                    <tr key={analysis._id}>
-                        <td>{analysis.context}</td>
-                        <td>{analysis.subject}</td>
-                        <td>
-                            {analysis.questions.map(question => (
-                                <div key={question._id}>
-                                    <p>{question.question}</p>
-                                    <p><div className="red">{  <div  dangerouslySetInnerHTML={{ __html: marked(question.answer ? question.answer : "none") }} />  } </div></p>
-                                </div>
-                            ))}
-                        </td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
+        <div>
+        
+                <Tree data={analyses}> </Tree>
+        </div>
     );
 };
 

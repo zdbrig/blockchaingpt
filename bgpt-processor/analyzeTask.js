@@ -18,7 +18,11 @@ let analyzeTask = async (task, channel) => {
     log("got response" + text);
 
     await addAnswerToQuestion(task.context, task.query, text);
-    const items = text.match(/\d+\.\s[^\d]+/g);
+    let items = text.match(/\d+\.\s[^\d]+/g);
+    if (!items) {
+      text= await callopenai(`the context is ${task.context}. What are the steps to realize this task:  ${task.query}`);
+      items = text.match(/\d+\.\s[^\d]+/g);
+    }
     if (items) {
       
       const queue = 'openai-analyze';
@@ -28,7 +32,7 @@ let analyzeTask = async (task, channel) => {
       items.map(async item => {
         let pureItem = item.replace(/^\d+\.\s/, "");
         
-        await addQuestionToAnalysis(task.context,pureItem);
+        await addQuestionToAnalysis(task.context,pureItem , task.query);
 
         let obj = {
           id: '' + Math.floor(Math.random() * 100),
@@ -45,7 +49,9 @@ let analyzeTask = async (task, channel) => {
 
 
     } else {
-      const queue = 'openai-queue';
+      
+    console.log("no further questions about this task");
+  /*    const queue = 'openai-queue';
       channel.assertQueue(queue, {
         durable: true
       });
@@ -60,7 +66,7 @@ let analyzeTask = async (task, channel) => {
 
       channel.sendToQueue(queue, Buffer.from(JSON.stringify(obj)), {
         persistent: true
-      });
+      }); */
 
     }
 

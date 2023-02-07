@@ -9,7 +9,11 @@ const QuestionSchema = new Schema({
     answer: {
         type: String,
         required: true
-    }
+    },
+    parent: {
+      type: String,
+      required: true
+  },
 });
 
 const AnalysisSchema = new Schema({

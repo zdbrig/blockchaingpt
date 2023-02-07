@@ -5,7 +5,8 @@ import Tasks from './tasks';
 import LoginWithGitHubButton from './loginWithGithubButton';
 import Router from 'next/router';
 import AnalysisList from './analysis';
-
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 const ChatPage = () => {
   const [userMessage, setUserMessage] = useState('');
@@ -13,7 +14,18 @@ const ChatPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [token, setToken] = useState(null);
+  
 
+const generatePDF = () => {
+  const input = document.getElementById("tree");
+  html2canvas(input)
+    .then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF();
+      pdf.addImage(imgData, "PNG", 0, 0);
+      pdf.save("download.pdf");
+    });
+};
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -61,6 +73,7 @@ const ChatPage = () => {
 
 
   return (
+    <div>
     <div className="chat-container">
       <h1>Blockchain GPT Chat</h1>
       
@@ -91,7 +104,6 @@ const ChatPage = () => {
             </form>
 
             <Tasks></Tasks>
-            <AnalysisList></AnalysisList>
           </div>
         
           <div>
@@ -101,6 +113,11 @@ const ChatPage = () => {
       
 
 
+
+    </div>
+    <button onClick={generatePDF}>Download PDF</button>
+
+    <AnalysisList></AnalysisList>
 
     </div>
   );

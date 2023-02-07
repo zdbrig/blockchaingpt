@@ -88,21 +88,52 @@ button[type="submit"] {
   width: 80px;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
+
+
+.tree {
+  padding-left: 20px;
+  background-color: beige;
 }
 
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
+.tree li {
+  list-style: none;
+  margin-bottom: 10px;
+  font-size: 14px;
 }
 
-th {
-  background-color: #ddd;
+.tree li::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid black;
+  border-left: 2px solid black;
+  position: absolute;
+  left: -30px;
+  top: 5px;
 }
 
-.red {
-  color: red;
+.tree li:last-child::before {
+  border-bottom: 2px solid black;
+}
+
+.tree li > ul {
+  font-size: 10px;
+}
+
+.tree p {
+  display: inline-block;
+  margin: 0;
+  padding-right: 12px;
+}
+
+.tree p.question {
+  font-weight: bold;
+}
+
+.tree p.answer {
+  color: grey;
+  margin-left: 10px;
+  margin-top: 4px;
+  font-style: italic;
 }

@@ -9,6 +9,10 @@ const QuestionSchema = new Schema({
     answer: {
         type: String,
         required: false
+    },
+    parent: {
+        type: String,
+        required: false
     }
 });
 

@@ -8,13 +8,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
 let connectedChannel = null;
 amqp.connect(process.env.HQ_URI, (error, connection) => {
     if (error) {
         throw error;
     }
-
     // Create a channel
     connection.createChannel((error, channel) => {
         if (error) {
