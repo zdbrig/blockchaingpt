@@ -17,7 +17,11 @@ const AnalysisList = () => {
     
     useEffect(() => {
         const fetchData = async () => {
-            const result = await axios.get('http://localhost:3001/analysis');
+            const result = await axios.get('http://localhost:3001/analysis', {
+                headers: {
+                  authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+              });
             setAnalyses(result.data);
         };
         fetchData();

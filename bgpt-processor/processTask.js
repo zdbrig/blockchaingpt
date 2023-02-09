@@ -5,6 +5,7 @@ const { throws } = require('assert');
 const callopenai = require('./call-openai');
 const suggest_question = require('./suggest-question');
 const Task = require('./Task');
+const callOpenAiImage = require('./call-openai-image');
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -48,7 +49,7 @@ async function saveQuestion(str) {
 let processTask = async (task, channel) => {
   try {
     log(`processing query ${task}`);
-    let text = await callopenai(task.query);
+    let text = await callOpenAiImage(task.query);
     log("got response" + text);
     await saveQuestion(task.query);
     let mtask = new Task(

@@ -7,7 +7,11 @@ const Tasks = () => {
   const [tasks, setTasks] = useState([]);
 
   const refreshTasks = () => {
-    fetch('http://localhost:3001/tasks')
+    fetch('http://localhost:3001/tasks', {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
       .then(res => res.json())
       .then(data => {
         setTasks(data);

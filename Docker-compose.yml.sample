@@ -9,6 +9,8 @@ services:
       - BASE_URL=http://localhost:3000
       - MONGODB_URI=mongodb://mongodb:27017
       - PROCESSOR_URL=http://bgpt-processor:3002/
+      - GITHUB_CLIENT_ID=id
+      - GITHUB_CLIENT_SECRET=secret
     depends_on:
       - rabbitmqservice
       - mongodb
@@ -20,8 +22,8 @@ services:
     ports:
       - 3000:3000
     environment:
-      - GITHUB_CLIENT_ID=your_id
-      - GITHUB_CLIENT_SECRET=your_secret
+      - GITHUB_CLIENT_ID=id
+      - GITHUB_CLIENT_SECRET=secret
       - BASE_URL=http://localhost:3000
     depends_on:
       - bgpt-server
@@ -60,6 +62,7 @@ services:
     build: ./bgpt-worker
     environment:
       - PROCESSOR_URL=http://bgpt-processor:3002/query
+      - ANALYZER_URL=http://bgpt-processor:3002/analyze
       - RABBITMQ_HOST=rabbitmqservice
     volumes:
       - ./bgpt-worker:/app

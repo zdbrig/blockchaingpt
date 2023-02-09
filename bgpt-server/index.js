@@ -4,9 +4,8 @@ const mongoose = require('mongoose');
 const amqp = require('amqplib/callback_api');
 const Task = require('./Task'); // importing the Task model
 const Analysis = require('./Analysis');
-
-
-
+const axios = require('axios')
+const jwt = require( 'jsonwebtoken');
 
 const app = express();
 
@@ -31,9 +30,82 @@ amqp.connect(process.env.HQ_URI, (error, connection) => {
     });
 });
 
+app.post('/auth/github', (req, res) => {
+    const code = req.body.code;
+    if (!code) {
+      return res.status(400).send('Bad Request: No code found');
+    }
+    console.log(process.env.GITHUB_CLIENT_ID);
+    // Make a POST request to GitHub's access_token endpoint to exchange the code for an access token
+    axios.post('https://github.com/login/oauth/access_token', {
+      client_id: process.env.GITHUB_CLIENT_ID,
+      client_secret: process.env.GITHUB_CLIENT_SECRET,
+      code,
+    }, {
+      headers: {
+        Accept: 'application/json',
+      },
+    })
+      .then(({ data }) => {
+        const access_token = data.access_token;
+        console.log("token = " + JSON.stringify(data));
+        // Use the access token to get the user's profile information
+        axios.get('https://api.github.com/user', {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        })
+          .then(({ data }) => {
+            // Store the access token and user information in the server-side session
+            let user = { user: data.login };
+            console.log(user);
+            const token = jwt.sign(
+                { user: data.login },
+                "secret"
+              );
+        
+              // save user token
+              user.access_token = token;
+              
+            // Redirect the user back to the client-side
+            return res.send(user);
+          })
+          .catch(err => {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+          });
+      })
+      .catch(err => {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+      });
+  });
+  
+
+const authenticate = (req, res, next) => {
+    const token = req.header('Authorization');
+    if (!token) 
+        return ;
+  
+    try {
+        
+      const decoded = jwt.verify(token.substring(7), "secret");
+      req.user = decoded.user;
+      next();
+    } catch (error) {
+      res.status(400).send('Invalid Token');
+    }
+  };
+  
+  app.use(authenticate);
+
 app.post('/query', async (req, res) => {
     try {
-
+        if (!req.user) {
+            return res.status(403).send('Invalid Token');
+        } else {
+            console.log(req.user);
+        }
         // Declare a queue
         const queue = 'openai-queue';
         connectedChannel.assertQueue(queue, {
@@ -44,6 +116,7 @@ app.post('/query', async (req, res) => {
             id: '' + Math.floor(Math.random() * 100),
             status: 'pending',
             parent: '',
+            user: req.user,
             query: req.body.query,
             result: ''
           };
@@ -63,6 +136,11 @@ app.post('/query', async (req, res) => {
 
 // Get all tasks
 app.get('/tasks', async (req, res) => {
+    if (!req.user) {
+        return res.status(403).send('Invalid Token');
+    } else {
+        console.log(req.user);
+    }
   try {
     const tasks = await Task.find();
     res.json(tasks);
@@ -72,6 +150,11 @@ app.get('/tasks', async (req, res) => {
 });
 
 app.get('/analysis', (req, res) => {
+    if (!req.user) {
+        return res.status(403).send('Invalid Token');
+    } else {
+        console.log(req.user);
+    }
     Analysis.find({})
         .then(analyses => res.json(analyses))
         .catch(err => res.status(404).json({ success: false }));

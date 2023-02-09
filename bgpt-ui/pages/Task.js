@@ -35,7 +35,7 @@ const Task = ({ status, time, query, result }) => {
         
         <strong>Answer: </strong>
         
-      {  <div  dangerouslySetInnerHTML={{ __html: marked(localResult ? localResult : "none") }} />  }
+        <img src={localResult} />  
       </div>
     </div>
   );

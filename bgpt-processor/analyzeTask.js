@@ -14,13 +14,19 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 let analyzeTask = async (task, channel) => {
   try {
     log(`analyzing query ${task}`);
-    let text = await callopenai(`the context is ${task.context}. Now my task is :  ${task.query}`);
-    log("got response" + text);
-
+    let parent = task.parent ? task.parent : "";
+    let text = await callopenai(`the context is ${task.context} ${parent}. Please execute this task :  ${task.query}`);
+    try {
+      text = await callopenai(`Please clean this content and add line returns when needed and surround the code with <code> tags when there is code \n :  ${text}`);
+    }
+    catch(error) {
+      console.log(error);
+    }
     await addAnswerToQuestion(task.context, task.query, text);
+
     let items = text.match(/\d+\.\s[^\d]+/g);
     if (!items) {
-      text= await callopenai(`the context is ${task.context}. What are the steps to realize this task:  ${task.query}`);
+      text= await callopenai(`the context is ${task.context} ${parent}. What are the steps to realize this task:  ${task.query}`);
       items = text.match(/\d+\.\s[^\d]+/g);
     }
     if (items) {
@@ -73,7 +79,16 @@ let analyzeTask = async (task, channel) => {
     return text;
 
   } catch (err) {
-    console.error(err);
+    console.log("rescheduling task ... ");
+    const queue = 'openai-analyze';
+      channel.assertQueue(queue, {
+        durable: true
+      });
+
+      channel.sendToQueue(queue, Buffer.from(JSON.stringify(task)), {
+        persistent: true
+      });
+    
 
   }
 }

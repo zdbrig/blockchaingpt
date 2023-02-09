@@ -1,10 +1,15 @@
 import React from 'react';
+import hljs from 'highlight.js'
+import {marked} from 'marked';
 
 const TreeNode = ({ node, children }) => (
     <li>
 
         <p className="question">{node.question}</p>
-        <p className="answer">{node.answer}</p>
+        <p className="answer">
+        <div  dangerouslySetInnerHTML={{ __html: marked(node.answer ? node.answer : "none") }} />
+        
+            </p>
         {children.length > 0 && <ul>{children}</ul>}
     </li>
 );
