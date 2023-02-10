@@ -17,6 +17,10 @@ const QuestionSchema = new Schema({
 });
 
 const AnalysisSchema = new Schema({
+    id: {
+        type: String,
+        required: true
+    },
     context: {
         type: String,
         required: true
@@ -25,6 +29,7 @@ const AnalysisSchema = new Schema({
         type: String,
         required: false
     },
+    user: { type: String, required: true },
     questions: [QuestionSchema]
 });
 

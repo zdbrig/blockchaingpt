@@ -28,7 +28,7 @@ amqp.connect(process.env.HQ_URI, (error, connection) => {
 });
 
 app.post('/query', async (req, res) => {
-    console.log(req.body.query);
+   
     try {
         
         let response = await processTask(req.body, connectedChannel);

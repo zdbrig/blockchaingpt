@@ -35,7 +35,6 @@ app.post('/auth/github', (req, res) => {
     if (!code) {
       return res.status(400).send('Bad Request: No code found');
     }
-    console.log(process.env.GITHUB_CLIENT_ID);
     // Make a POST request to GitHub's access_token endpoint to exchange the code for an access token
     axios.post('https://github.com/login/oauth/access_token', {
       client_id: process.env.GITHUB_CLIENT_ID,
@@ -48,7 +47,6 @@ app.post('/auth/github', (req, res) => {
     })
       .then(({ data }) => {
         const access_token = data.access_token;
-        console.log("token = " + JSON.stringify(data));
         // Use the access token to get the user's profile information
         axios.get('https://api.github.com/user', {
           headers: {
@@ -58,7 +56,7 @@ app.post('/auth/github', (req, res) => {
           .then(({ data }) => {
             // Store the access token and user information in the server-side session
             let user = { user: data.login };
-            console.log(user);
+           
             const token = jwt.sign(
                 { user: data.login },
                 "secret"
@@ -104,7 +102,6 @@ app.post('/query', async (req, res) => {
         if (!req.user) {
             return res.status(403).send('Invalid Token');
         } else {
-            console.log(req.user);
         }
         // Declare a queue
         const queue = 'openai-queue';
@@ -113,7 +110,7 @@ app.post('/query', async (req, res) => {
         });
 
         let obj = {
-            id: '' + Math.floor(Math.random() * 100),
+            id: req.body.id,
             status: 'pending',
             parent: '',
             user: req.user,
@@ -139,10 +136,9 @@ app.get('/tasks', async (req, res) => {
     if (!req.user) {
         return res.status(403).send('Invalid Token');
     } else {
-        console.log(req.user);
     }
   try {
-    const tasks = await Task.find();
+    const tasks = await Task.find({user: req.user});
     res.json(tasks);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -153,9 +149,8 @@ app.get('/analysis', (req, res) => {
     if (!req.user) {
         return res.status(403).send('Invalid Token');
     } else {
-        console.log(req.user);
     }
-    Analysis.find({})
+    Analysis.find({user: req.user})
         .then(analyses => res.json(analyses))
         .catch(err => res.status(404).json({ success: false }));
 });

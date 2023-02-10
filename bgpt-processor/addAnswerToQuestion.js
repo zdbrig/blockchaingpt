@@ -13,7 +13,7 @@ const addAnswerToQuestion = (context, question, answer) => {
             analysis.questions[index].answer = answer;
             return analysis.save();
         })
-        .then(analysis => console.log(`Answer added to question: ${analysis}`))
+       
             .catch(err => console.log(err));
 };
 

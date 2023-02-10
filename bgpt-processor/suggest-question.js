@@ -19,17 +19,16 @@ async function loadQuestions() {
     }
   }
 
-let suggest_question = async (answer , previousQuestion) => {
-    await createAnalysis(previousQuestion);
-    let questions = await loadQuestions();
-    let query =  `These questions between backets  [ ${questions} ] has been already asked. List me all the possible tasks that can be done by you to perform this goal.`;
+let suggest_question = async (answer , task) => {
+    await createAnalysis(task.query,task.user,task.id);
+    let query =  `${task.query} . List me all the possible tasks that can be done by you to perform this goal.`;
     log(`suggestion query is : ${query}`);
     let response = await callopenai(query);
     log(`response is : ${response}`);
     const items = response.match(/\d+\.\s[^\d]+/g);
     items.map( async item => {
       let pureItem = item.replace(/^\d+\.\s/, "");
-      await addQuestionToAnalysis(previousQuestion , pureItem);
+      await addQuestionToAnalysis(task.query , pureItem);
     });
     return items;
 }

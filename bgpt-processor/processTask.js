@@ -60,7 +60,7 @@ let processTask = async (task, channel) => {
     await mtask.save();
 
 
-    suggest_question(text, task.query).then(
+    suggest_question(text, task).then(
       (suggestions) => {
         if (suggestions) {
           suggestions.map((suggestion) => {
@@ -70,9 +70,10 @@ let processTask = async (task, channel) => {
               durable: true
             });
             let obj = {
-              id: '' + Math.floor(Math.random() * 100),
+              id: task.id,
               status: 'pending',
               context: task.query,
+              user: task.user,
               query: pureItem,
               result: ''
             };

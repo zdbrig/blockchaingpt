@@ -5,8 +5,6 @@ import Tasks from './tasks';
 import LoginWithGitHubButton from './loginWithGithubButton';
 import Router from 'next/router';
 import AnalysisList from './analysis';
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 
 import jwt from 'jsonwebtoken';
 
@@ -26,7 +24,7 @@ const ChatPage = () => {
     if (token) {
       try {
         const decoded = jwt.decode(token);
-        console.log(decoded);
+        
         setUser(decoded);
       } catch (err) {
         console.error(err);
@@ -43,6 +41,8 @@ const ChatPage = () => {
     try {
       const response = await axios.post('http://localhost:3001/query', {
         query: userMessage,
+        id: ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16))
       }, {
         headers: {
           authorization: `Bearer ${localStorage.getItem('token')}`

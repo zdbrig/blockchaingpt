@@ -9,7 +9,6 @@ const addQuestionToAnalysis = (context, question, parent ) => {
             analysis.questions.push({ question , answer: "--" , parent });
             return analysis.save();
         })
-        .then(analysis => console.log(`Question added to analysis: ${analysis}`))
         .catch(err => console.log(err));
 };
 
