@@ -28,6 +28,7 @@ const LoginWithGitHubButton = () => {
 
       // Store access token in local storage
       localStorage.setItem("token", accessToken);
+      window.location.href = "/";
     } catch (error) {
       console.error(error);
     }

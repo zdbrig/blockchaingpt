@@ -7,6 +7,7 @@ import Router from 'next/router';
 import AnalysisList from './analysis';
 
 import jwt from 'jsonwebtoken';
+import LogoutButton from './logoutbutton';
 
 const ChatPage = () => {
 
@@ -98,11 +99,11 @@ const ChatPage = () => {
               {isLoading ? 'Loading...' : 'Submit'}
             </button>
           </form>
-
+          <LogoutButton></LogoutButton>
           <Tasks></Tasks>
         </div>
      </div>
-
+    
     <AnalysisList></AnalysisList>
 
     </div>
