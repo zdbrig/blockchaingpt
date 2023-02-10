@@ -6,6 +6,9 @@ import logging
 
 queries_count = {}
 max_queries = 10
+user_queries_count = {}
+max_user_queries = 100
+
 logging.basicConfig(filename='worker.log', level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 
 
@@ -14,18 +17,29 @@ def execute(ch, method, properties, body):
     # parse the task from the message body
     task = body.decode() 
     json_object = json.loads(task)
-    logging.info("execute: " , json_object.get("id"))
-    task_id = task[0]
+    logging.info("execute: {0}".format( json_object))
+    task_id = json_object["id"]
+    user_id = json_object["user"]
     if task_id in queries_count:
         queries_count[task_id] += 1
     else:
         queries_count[task_id] = 1
 
-    #if queries_count[task_id] > max_queries:
-    #    print("max queries reached")
+    if user_id in user_queries_count:
+        user_queries_count[user_id] += 1
+    else:
+        user_queries_count[user_id] = 1
+
+    if queries_count[task_id] > max_queries:
+        print("max queries reached")
         # do not execute the query and acknowledge the task
-    #    ch.basic_ack(delivery_tag=method.delivery_tag)
-    #    return
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+        return
+    if user_queries_count[user_id] > max_user_queries:
+        print("max user queries reached")
+        # do not execute the query and acknowledge the task
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+        return
 
     # make a call to the web service with the task
     response = requests.post(os.environ['PROCESSOR_URL'], json=json_object)
@@ -42,19 +56,31 @@ def analyze(ch, method, properties, body):
     task = body.decode()
     json_object = json.loads(task)
 
-    task_id = task_id = task[0]
-    logging.info("execute: " , json_object)
+    task_id = json_object["id"]
+    user_id = json_object["user"]
+    logging.info("analyze: {0}".format(json_object) )
 
     if task_id in queries_count:
         queries_count[task_id] += 1
     else:
         queries_count[task_id] = 1
+    
+    if user_id in user_queries_count:
+        user_queries_count[user_id] += 1
+    else:
+        user_queries_count[user_id] = 1
 
-    #if queries_count[task_id] > max_queries:
+    if queries_count[task_id] > max_queries:
         # do not execute the query and acknowledge the task
-    #    print("max queries reached")
-    #    ch.basic_ack(delivery_tag=method.delivery_tag)
-    #    return
+        logging.warning("Task: {0} reached {1}".format( task_id ,queries_count[task_id] ))
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+        return
+
+    if user_queries_count[user_id] > max_user_queries:
+        print("max user queries reached")
+        # do not execute the query and acknowledge the task
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+        return
 
     # make a call to the web service with the task
     response = requests.post(os.environ['ANALYZER_URL'], json=json_object)
@@ -74,7 +100,8 @@ def main():
     channel = connection.channel()
     # declare the list of queue names
     queue_names = ["openai-queue", "openai-analyze", "queue3"]
-    
+    channel.basic_qos(prefetch_count=5)
+
     channel.queue_declare(queue="openai-queue", durable=True)
     channel.basic_consume(queue="openai-queue", on_message_callback=execute)
     channel.queue_declare(queue="openai-analyze", durable=True)
