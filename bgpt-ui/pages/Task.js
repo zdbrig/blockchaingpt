@@ -22,21 +22,15 @@ const Task = ({ status, time, query, result }) => {
 
   return (
     <div className="task">
-      <h3>Task</h3>
-      <div>
-        <strong>Status: </strong> {localStatus}
-      </div>
+      <h3>Project : {localQuery}</h3>
+      
     
-      <div>
-        <strong>Question: </strong> {localQuery}
-      </div>
-      <div>
-
+     
         
-        <strong>Answer: </strong>
+        
         
         <img src={localResult} />  
-      </div>
+      
     </div>
   );
 };

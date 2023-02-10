@@ -46,6 +46,10 @@ const Tree = ({ data }) => {
             {data.map(analysis => (
                 <li key={analysis._id}>
                     {analysis.context}
+                    <br></br>
+                    <p> by {analysis.user} </p> 
+                    <br></br>
+                    <p>id: {analysis.id}</p>
                     {buildTree(analysis.questions)}
                 </li>
             ))}

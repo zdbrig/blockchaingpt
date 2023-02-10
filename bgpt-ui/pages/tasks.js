@@ -27,7 +27,7 @@ const Tasks = () => {
 
   return (
     <div>
-      <h2>Tasks</h2>
+      <h2>Projects</h2>
       <button onClick={refreshTasks}>Refresh</button>
       <ul>
         {tasks.map(task => (
