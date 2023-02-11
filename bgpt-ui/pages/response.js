@@ -19,7 +19,7 @@ const RichText = ({ content }) => {
   return (
     <div
       ref={codeRef}
-      dangerouslySetInnerHTML={{ __html: marked(content) }}
+      dangerouslySetInnerHTML={{ __html: marked(content ? content : "none") }}
     />
   )
 }
