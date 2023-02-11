@@ -157,6 +157,48 @@ app.get('/analysis', (req, res) => {
 
 
 
+app.post('/answer', async (req, res) => {
+  const { node } = req.body;
+  try {
+    const analysis = await Analysis.findOne({ id: node.parent });
+    const questionIndex = analysis.questions.findIndex(question => question.question === node.question);
+    analysis.questions[questionIndex].answer = node.answer;
+    await analysis.save();
+    res.send(analysis);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+app.delete('/delete', async (req, res) => {
+  const { nodeId } = req.query;
+  try {
+    const analysis = await Analysis.findOne({ id: nodeId });
+    const questionIndex = analysis.questions.findIndex(question => question.id === nodeId);
+    analysis.questions.splice(questionIndex, 1);
+    await analysis.save();
+    res.send(analysis);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+app.post('/go-deep', async (req, res) => {
+  const { node } = req.body;
+  try {
+    const analysis = await Analysis.findOne({ id: node.parent });
+    const questionIndex = analysis.questions.findIndex(question => question.question === node.question);
+    analysis.questions.splice(questionIndex + 1, 0, {
+      question: '',
+      answer: '--',
+      parent: analysis.id
+    });
+    await analysis.save();
+    res.send(analysis);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
 
 app.listen(3001, () => {
     console.log('Listening on port 3001');

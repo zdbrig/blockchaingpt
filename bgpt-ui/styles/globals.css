@@ -137,3 +137,23 @@ button[type="submit"] {
   margin-top: 4px;
   font-style: italic;
 }
+
+.links {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.links a {
+  color: #333;
+  font-size: 20px;
+  text-decoration: none;
+  margin-right: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+.links a:hover {
+  color: #0070f3;
+  transform: scale(1.2);
+}

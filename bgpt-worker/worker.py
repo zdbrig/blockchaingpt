@@ -5,9 +5,9 @@ import json
 import logging
 
 queries_count = {}
-max_queries = 10
+max_queries = 100
 user_queries_count = {}
-max_user_queries = 100
+max_user_queries = 1000
 
 logging.basicConfig(filename='worker.log', level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 
